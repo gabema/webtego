@@ -13,7 +13,7 @@ const makeRow = rowSpots => rowSpots.map((spot, index) => (
   <Spot key={index} allowsPiece={spot.allowsPiece} />
 ));
 
-const Board = ({board}) => (
+const Board = ({board = []}) => (
   <div>
     {makeSpots(board)}
   </div>
