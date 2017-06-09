@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux'
-import { createBoard, createTeam, PIECE_COLORS } from '../models/';
+import { MOVE_PIECE_TO_BOARD } from '../actions/';
+import { addPieceToBoard, createBoard, createTeam, PIECE_COLORS, popPiece } from '../models/';
 
 const board = (state = createBoard(), action) => {
     switch(action.type) {
+        case MOVE_PIECE_TO_BOARD: {
+            return addPieceToBoard(state, action.piece, action.index);
+        }
         default:
         return state;
     }
@@ -10,6 +14,12 @@ const board = (state = createBoard(), action) => {
 
 const createTeamReducer = teamColor => (state = createTeam(teamColor), action) => {
     switch(action.type) {
+        case MOVE_PIECE_TO_BOARD: {
+            if (action.piece.color !== teamColor) {
+                return state;
+            }
+            return popPiece(state, action.piece.name).pieces;
+        }
         default:
         return state;
     }
