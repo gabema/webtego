@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
 import './Spot.css';
-import { pieceDragAndDropTag } from './Piece';
-import playable from '../playablespot.svg';
-import unplayable from '../unplayablespot.svg';
+import Piece, { pieceDragAndDropTag } from './Piece';
+// import playable from '../playablespot.svg';
+// import unplayable from '../unplayablespot.svg';
 
 const spotTarget = {
   drop(props, monitor) {
@@ -18,8 +18,11 @@ const collect = (connect, monitor) => ({
   isOver: monitor.isOver()
 });
 
-const Spot = ({allowsPiece, connectDropTarget, isOver}) => connectDropTarget(
-  <img className="Spot" src={allowsPiece ? playable : unplayable} alt={allowsPiece ? 'playable' : 'unplayable'} />
+const Spot = ({allowsPiece, connectDropTarget, isOver, piece}) => connectDropTarget(
+  // <img className="Spot" src={allowsPiece ? playable : unplayable} alt={allowsPiece ? 'playable' : 'unplayable'} />
+  <div className={'Spot' + (allowsPiece ? ' Playable' : ' Unplayable')}>
+    {piece ? <Piece piece={piece} /> : ''}
+  </div>
 );
 
 Spot.PropTypes = {

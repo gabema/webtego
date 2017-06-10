@@ -8,7 +8,6 @@ import map from 'lodash.map';
 import PropTypes from 'prop-types';
 import Piece from './Piece';
 import Spot from './Spot';
-import './Board.css';
 
 const makeSpots = (board, movePieceTo) => {
   const colWidth = Math.floor(Math.sqrt(board.length));
@@ -19,13 +18,14 @@ const makeSpots = (board, movePieceTo) => {
   ));
 };
 
-// const movePieceTo = (piece, index) => {
-//   console.log(piece);
-//   console.log('movePieceTo:' + index);
-// };
-
 const makeRow = (colSpots, startRowIndex, movePieceTo) => colSpots.map((spot, index) => (
-  <Spot key={startRowIndex + index} index={startRowIndex + index} allowsPiece={spot.allowsPiece} movePieceTo={movePieceTo} />
+  <Spot
+    key={startRowIndex + index}
+    index={startRowIndex + index}
+    allowsPiece={spot.allowsPiece}
+    movePieceTo={movePieceTo}
+    piece={spot.piece}
+    />
 ));
 
 const makeTeam = (color, pieces) => {

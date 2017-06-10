@@ -1,6 +1,14 @@
 
 .Spot {
-    display: inline;
+    display: inline-block;
     width: 5em;
     height: 5em;
+}
+
+.Playable {
+    background-image: url('../playablespot.svg');
+}
+
+.Unplayable {
+    background-image: url('../unplayablespot.svg');   
 }
