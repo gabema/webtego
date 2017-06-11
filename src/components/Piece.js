@@ -7,9 +7,6 @@ export const pieceDragAndDropTag = 'Piece';
 
 const pieceSource = {
   beginDrag(props) {
-      // TODO: What do I put here?
-      // console.log('pieceSource');
-      // console.log(props);
       return props;
   }
 };

@@ -29,6 +29,14 @@ export const PIECE_COLORS = {
   BLUE: 'blue',
 }
 
+export const GAME_STATES = {
+  SETUP_RED: 'Red Player Setup',
+  SETUP_BLUE: 'Blue Player Setup',
+  PLAY_RED: 'Red Player Turn',
+  PLAY_BLUE: 'Blue Player Turn',
+  PASS_TO_PLAYER: 'Pass To Other Player'
+}
+
 const FLAG = {
   name: PIECE_NAMES.FLAG,
   short: 'F',
@@ -155,8 +163,10 @@ export const createBoard = () => [
     ...fill(Array(40), createUsableBoardSpot()),
 ];
 
+export const canAddPieceToBoard = (board, piece, index) => (!(index >= board.length || !board[index].allowsPiece || board[index].piece));
+
 export const addPieceToBoard = (board = [], piece, index) => {
-    if (index >= board.length || !board[index].allowsPiece || board[index].piece) {
+    if (!canAddPieceToBoard(board, piece, index)) {
         return board;
     }
     let newBoard = [...board];

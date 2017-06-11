@@ -37,8 +37,9 @@ const makeTeamRow = pieceGroupArr => pieceGroupArr.map((pieceGroup, index) => (
   <Piece key={pieceGroup.piece.color + index} piece={pieceGroup.piece} pieceCount={pieceGroup.count} />
 ));
 
-const Board = ({board, redTeam, blueTeam, movePieceTo}) => (
+const Board = ({game, board, redTeam, blueTeam, movePieceTo}) => (
   <div>
+    <h1>{game}</h1>
     {makeTeam(redTeam.length && redTeam[0].color, redTeam)}
     {makeSpots(board, movePieceTo)}
     {makeTeam(blueTeam.length && blueTeam[0].color, blueTeam)}
@@ -49,6 +50,7 @@ Board.propTypes = {
   board: PropTypes.array.isRequired,
   redTeam: PropTypes.array.isRequired,
   blueTeam: PropTypes.array.isRequired,
+  game: PropTypes.string.isRequired,
 };
 
 export default DragDropContext(HTML5Backend)(Board);

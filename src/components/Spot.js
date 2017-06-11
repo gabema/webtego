@@ -19,7 +19,6 @@ const collect = (connect, monitor) => ({
 });
 
 const Spot = ({allowsPiece, connectDropTarget, isOver, piece}) => connectDropTarget(
-  // <img className="Spot" src={allowsPiece ? playable : unplayable} alt={allowsPiece ? 'playable' : 'unplayable'} />
   <div className={'Spot' + (allowsPiece ? ' Playable' : ' Unplayable')}>
     {piece ? <Piece piece={piece} /> : ''}
   </div>

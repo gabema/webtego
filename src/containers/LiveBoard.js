@@ -6,6 +6,7 @@ const mapStateToProps = (state) => ({
   board: state.board,
   redTeam: state.redTeam,
   blueTeam: state.blueTeam,
+  game: state.game,
 });
 
 const mapDispatchToProps = (dispatch) => ({
