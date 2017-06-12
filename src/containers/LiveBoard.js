@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Board from '../components/Board';
-import { movePieceToBoard } from '../actions/';
+import { movePieceToBoard, nextState } from '../actions/';
 
 const mapStateToProps = (state) => ({
   board: state.board,
@@ -11,7 +11,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   movePieceTo: (piece, index) => {
-    dispatch(movePieceToBoard(piece, index))
+    dispatch(movePieceToBoard(piece, index));
+  },
+  gotoNextState: (nextGameState) => {
+    dispatch(nextState(nextGameState));
   }
 });
 

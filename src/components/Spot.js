@@ -18,9 +18,9 @@ const collect = (connect, monitor) => ({
   isOver: monitor.isOver()
 });
 
-const Spot = ({allowsPiece, connectDropTarget, isOver, piece}) => connectDropTarget(
+const Spot = ({allowsPiece, connectDropTarget, isOver, piece, game}) => connectDropTarget(
   <div className={'Spot' + (allowsPiece ? ' Playable' : ' Unplayable')}>
-    {piece ? <Piece piece={piece} /> : ''}
+    {piece ? <Piece piece={piece} game={game} /> : ''}
   </div>
 );
 
