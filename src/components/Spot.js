@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
 import './Spot.css';
 import Piece, { pieceDragAndDropTag } from './Piece';
-// import playable from '../playablespot.svg';
-// import unplayable from '../unplayablespot.svg';
 
 const spotTarget = {
   drop(props, monitor) {
