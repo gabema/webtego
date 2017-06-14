@@ -174,6 +174,23 @@ export const addPieceToBoard = (board = [], piece, index) => {
     return newBoard;
 };
 
+export const changePiecesOnBoard = (board = [], fromIndex, toIndex) => {
+    let newBoard = [...board];
+    const toPiece = board[toIndex].piece || undefined;
+    const fromPiece = board[fromIndex].piece || undefined;
+    let newFromItem = assign({}, board[toIndex], {piece: toPiece});
+    if (!toPiece) {
+      delete newFromItem.piece;
+    }
+    newBoard[fromIndex] = newFromItem;
+    let newToItem = assign({}, board[fromIndex], {piece: fromPiece});
+    if (!fromPiece) {
+      delete newToItem.piece;
+    }
+    newBoard[toIndex] = newToItem;
+    return newBoard;
+};
+
 const columDifference = (startIndex = 0, endIndex = 0, columnWidth = 0) => endIndex % columnWidth - startIndex % columnWidth;
 const rowDifference = (startIndex = 0, endIndex = 0, columnWidth = 0) => Math.floor(endIndex / columnWidth) - Math.floor(startIndex / columnWidth);
 

@@ -6,26 +6,28 @@ import chunk from 'lodash.chunk';
 import groupBy from 'lodash.groupby';
 import map from 'lodash.map';
 import PropTypes from 'prop-types';
-import Piece from './Piece';
 import Spot from './Spot';
+import TeamSpot from './TeamSpot';
 
 import {GAME_STATES} from '../models/';
 
-const makeSpots = (board, movePieceTo, game) => {
+const makeSpots = (board, movePieceTo, movePieceOnBoard, playMovePieceTo, game) => {
   const colWidth = Math.floor(Math.sqrt(board.length));
   return chunk(board, colWidth).map((colPieces, rowIndex) => (
   <div key={rowIndex} style={{display: 'block', height: '5em'}}>
-    {makeRow(colPieces, rowIndex * colWidth, movePieceTo, game)}
+    {makeRow(colPieces, rowIndex * colWidth, movePieceTo, movePieceOnBoard, playMovePieceTo, game)}
   </div>
   ));
 };
 
-const makeRow = (colSpots, startRowIndex, movePieceTo, game) => colSpots.map((spot, index) => (
+const makeRow = (colSpots, startRowIndex, movePieceTo, movePieceOnBoard, playMovePieceTo, game) => colSpots.map((spot, index) => (
   <Spot
     key={startRowIndex + index}
     index={startRowIndex + index}
     allowsPiece={spot.allowsPiece}
     movePieceTo={movePieceTo}
+    movePieceOnBoard={movePieceOnBoard}
+    playMovePieceTo={playMovePieceTo}
     piece={spot.piece}
     game={game}
     />
@@ -37,14 +39,14 @@ const makeTeam = (color, pieces, state) => {
 };
 
 const makeTeamRow = (pieceGroupArr, state) => pieceGroupArr.map((pieceGroup, index) => (
-  <Piece key={pieceGroup.piece.color + index} piece={pieceGroup.piece} pieceCount={pieceGroup.count} game={state} />
+  <TeamSpot key={pieceGroup.piece.color + index} piece={pieceGroup.piece} pieceCount={pieceGroup.count} game={state} />
 ));
 
-const Board = ({game, board, redTeam, blueTeam, movePieceTo, gotoNextState}) => (
+const Board = ({game, board, redTeam, blueTeam, movePieceTo, movePieceOnBoard, playMovePieceTo, gotoNextState}) => (
   <div>
     <h1>{game.current} {game.next ? <a onClick={_ => gotoNextState(game.next)}>Click When Ready!</a> : '' }</h1>
     {makeTeam(redTeam.length && redTeam[0].color, redTeam, GAME_STATES.SETUP_RED)}
-    {makeSpots(board, movePieceTo, game.current)}
+    {makeSpots(board, movePieceTo, movePieceOnBoard, playMovePieceTo, game.current)}
     {makeTeam(blueTeam.length && blueTeam[0].color, blueTeam, GAME_STATES.SETUP_BLUE)}
   </div>
 );
