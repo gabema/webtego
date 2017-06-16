@@ -252,4 +252,12 @@ export const commitMoveOnBoard = (board, moveIndexes) => {
   newBoard[firstIndex] = startSpot;
   newBoard[lastIndex] = endSpot;
   return newBoard;
-}
+};
+
+export const attackMove = (board, attackerIndex, defenderIndex) => {
+  return {};
+};
+
+export const commitAttack = (board, attack) => {
+  return board;
+};

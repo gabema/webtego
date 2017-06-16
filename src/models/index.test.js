@@ -1,4 +1,4 @@
-import { PIECE_NAMES, PIECE_COLORS, createBoard, createTeam, popPiece, addPieceToBoard, movePieceOnBoard, commitMoveOnBoard } from './'
+import { PIECE_NAMES, PIECE_COLORS, createBoard, createTeam, popPiece, addPieceToBoard, movePieceOnBoard, commitMoveOnBoard, attackMove, commitAttack } from './'
 import assign from 'lodash.assign';
 
 it('creates a full blue team', () => {
@@ -264,4 +264,22 @@ it('can commit moving the scout left along the entire row of the board', () => {
         endIndex);
     let boardAfterMove = commitMoveOnBoard(board, changedIndexes);
     expect(board).not.toBe(boardAfterMove);
+});
+
+it('can defeat a lower ranked player when attacked by a higher rank horizontally', () => {
+    let board = createBoard();
+    let redTeam = createTeam(PIECE_COLORS.RED);
+    let blueTeam = createTeam(PIECE_COLORS.BLUE);
+    const attackIndex = 0;
+    let update = popPiece(blueTeam, PIECE_NAMES.MINER);
+    blueTeam = update.pieces;
+    const attackPiece = update.piece;
+    const defendIndex = 1;
+    update = popPiece(redTeam, PIECE_NAMES.SCOUT);
+    redTeam = update.pieces;
+    const defendPiece = update.piece;
+    board = addPieceToBoard(board, attackPiece, attackIndex);
+    board = addPieceToBoard(board, defendPiece, defendIndex);    
+    const attackOutcome = attackMove(board, attackIndex, defendIndex);
+    expect(attackOutcome).toEqual({attackPiece, defendPiece});
 });
