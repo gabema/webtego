@@ -279,7 +279,12 @@ it('can defeat a lower ranked player when attacked by a higher rank horizontally
     redTeam = update.pieces;
     const defendPiece = update.piece;
     board = addPieceToBoard(board, attackPiece, attackIndex);
-    board = addPieceToBoard(board, defendPiece, defendIndex);    
-    const attackOutcome = attackMove(board, attackIndex, defendIndex);
-    expect(attackOutcome).toEqual({attackPiece, defendPiece});
+    board = addPieceToBoard(board, defendPiece, defendIndex);
+    const attackOutcome = attackMove(board, attackIndex, defendIndex, redTeam, blueTeam);
+    expect(attackOutcome).toHaveProperty('redTeam', [...redTeam, defendPiece]);
+    expect(attackOutcome).toHaveProperty('blueTeam', blueTeam);
+    let expectedBoard = [...board];
+    expectedBoard[defendIndex].piece = expectedBoard[attackIndex].piece;
+    delete expectedBoard[attackIndex].piece;
+    expect(attackOutcome).toHaveProperty('board', expectedBoard);
 });

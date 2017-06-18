@@ -254,10 +254,33 @@ export const commitMoveOnBoard = (board, moveIndexes) => {
   return newBoard;
 };
 
-export const attackMove = (board, attackerIndex, defenderIndex) => {
-  return {};
-};
+export const attackMove = (oldBoard, attackIndex, defendIndex, oldRedTeam, oldBlueTeam) => {
+  const attacker = oldBoard[attackIndex].piece;
+  const defender = oldBoard[defendIndex].piece;
+  let redTeam = oldRedTeam;
+  let blueTeam = oldBlueTeam;
+  let board = [...oldBoard];
 
-export const commitAttack = (board, attack) => {
-  return board;
+  if (attacker.defeats.indexOf(defender.name) !== -1) {
+    if (defender.color === PIECE_COLORS.BLUE) {
+      blueTeam = [...oldBlueTeam, defender];
+    } else {
+      redTeam = [...oldRedTeam, defender];
+    }
+    board[defendIndex].piece = attacker;
+    delete board[attackIndex].piece;
+    return {board, redTeam, blueTeam};
+  }
+
+  if (defender.defeats.indexOf(attacker.name) !== -1) {
+    if (attacker.color === PIECE_COLORS.BLUE) {
+      blueTeam = [...oldBlueTeam, attacker];
+    } else {
+      redTeam = [...oldRedTeam, attacker];
+    }
+    delete board[attackIndex].piece;
+    return {board, redTeam, blueTeam};
+  }
+
+  return {board, redTeam, blueTeam};
 };

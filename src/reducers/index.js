@@ -1,5 +1,5 @@
 import { MOVE_PIECE_ON_BOARD, MOVE_PIECE_TO_BOARD, CHANGE_TO_NEXT_STATE, PLAY_MOVE_PIECE_TO } from '../actions/';
-import { addPieceToBoard, changePiecesOnBoard, createBoard, createTeam, PIECE_COLORS, popPiece, GAME_STATES, movePieceOnBoard, commitMoveOnBoard } from '../models/';
+import { attackMove, addPieceToBoard, changePiecesOnBoard, createBoard, createTeam, PIECE_COLORS, popPiece, GAME_STATES, movePieceOnBoard, commitMoveOnBoard } from '../models/';
 import assign from 'lodash.assign';
 
 const initAppReducer = () => ({
@@ -41,6 +41,14 @@ const appReducer = (state = initAppReducer(), action) => {
             return assign({}, state, {board: changePiecesOnBoard(state.board, action.fromIndex, action.toIndex)});
         }
         case PLAY_MOVE_PIECE_TO: {
+            if (state.board[action.fromIndex].piece && state.board[action.toIndex].piece &&
+                (state.board[action.fromIndex].piece.color !== state.board[action.toIndex].piece.color)) {
+                const attackResult = attackMove(state.board, action.fromIndex, action.toIndex, state.redTeam, state.blueTeam);
+                const current = GAME_STATES.PASS_TO_PLAYER;
+                const next = state.game.current === GAME_STATES.PLAY_RED ? GAME_STATES.PLAY_BLUE : GAME_STATES.PLAY_RED;
+                const game = {current, next};
+                return assign({}, state, {game, board: attackResult.board, redTeam: attackResult.redTeam, blueTeam: attackResult.blueTeam});
+            }
             const moveSpots = movePieceOnBoard(state.board, action.fromIndex, action.toIndex);
             if (moveSpots.length) {
                 const board = commitMoveOnBoard(state.board, moveSpots);
