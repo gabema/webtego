@@ -40,85 +40,85 @@ export const GAME_STATES = {
 const FLAG = {
   name: PIECE_NAMES.FLAG,
   short: 'F',
-  defeats: [],
+  rank: 11,
   moveType: MOVE_TYPES.IMMOVABLE,
   endsGame: true,
 };
 
 const MARSHAL = {
   name: PIECE_NAMES.MARSHAL,
-  short: '1',
-  defeats: [PIECE_NAMES.MARSHAL, PIECE_NAMES.GENERAL, PIECE_NAMES.COLONEL, PIECE_NAMES.SPY, PIECE_NAMES.MAJOR, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'M1',
+  rank: 1,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const GENERAL = {
   name: PIECE_NAMES.GENERAL,
-  short: '2',
-  defeats: [PIECE_NAMES.GENERAL, PIECE_NAMES.COLONEL, PIECE_NAMES.SPY, PIECE_NAMES.MAJOR, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'G2',
+  rank: 2,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const COLONEL = {
   name: PIECE_NAMES.COLONEL,
-  short: '3',
-  defeats: [PIECE_NAMES.COLONEL, PIECE_NAMES.SPY, PIECE_NAMES.MAJOR, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'C3',
+  rank: 3,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const MAJOR = {
   name: PIECE_NAMES.MAJOR,
-  short: '4',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.MAJOR, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'M4',
+  rank: 4,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const CAPTAIN = {
   name: PIECE_NAMES.CAPTAIN,
-  short: '5',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'C5',
+  rank: 5,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const LIEUTENANT = {
   name: PIECE_NAMES.LIEUTENANT,
-  short: '6',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'L6',
+  rank: 6,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const SERGEANT = {
   name: PIECE_NAMES.SERGEANT,
-  short: '7',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  short: 'S7',
+  rank: 7,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const MINER = {
   name: PIECE_NAMES.MINER,
-  short: '8',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.SCOUT, PIECE_NAMES.MINER],
+  short: 'M8',
+  rank: 8,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const SCOUT = {
   name: PIECE_NAMES.SCOUT,
-  short: '9',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.SCOUT],
+  short: 'S9',
+  rank: 9,
   moveType: MOVE_TYPES.UNLIMITED
 };
 
 const SPY = {
   name: PIECE_NAMES.SPY,
-  short: 'S',
-  defeats: [PIECE_NAMES.SPY, PIECE_NAMES.MARSHAL],
+  short: 'SPY',
+  rank: 10,
   moveType: MOVE_TYPES.SINGLE
 };
 
 const BOMB = {
   name: PIECE_NAMES.BOMB,
   short: 'B',
-  defeats: [PIECE_NAMES.MARSHAL, PIECE_NAMES.GENERAL, PIECE_NAMES.COLONEL, PIECE_NAMES.SPY, PIECE_NAMES.MAJOR, PIECE_NAMES.CAPTAIN, PIECE_NAMES.LIEUTENANT, PIECE_NAMES.SCOUT, PIECE_NAMES.SERGEANT, PIECE_NAMES.MINER],
+  rank: 0,
   moveType: MOVE_TYPES.IMMOVABLE
 };
 
@@ -147,6 +147,15 @@ export const createTeam = (color) => [
 
 const createUsableBoardSpot = () => ({ allowsPiece: true });
 const unusableBoardSpot = {};
+
+const canPerformAttack = (board, attackIndex, defendIndex) => {
+  const attackPiece = board[attackIndex].piece;
+  const defendPiece = board[defendIndex].piece;
+  if (!attackPiece || !defendPiece || attackPiece.color === defendPiece.color) return false;
+  const boardWidth = Math.round(Math.sqrt(board.length));
+  const diff = Math.abs(attackIndex - defendIndex);
+  return (diff === 1 || diff === boardWidth);
+};
 
 export const createBoard = () => [
     ...fill(Array(40), createUsableBoardSpot()),
@@ -255,13 +264,15 @@ export const commitMoveOnBoard = (board, moveIndexes) => {
 };
 
 export const attackMove = (oldBoard, attackIndex, defendIndex, oldRedTeam, oldBlueTeam) => {
+  if (!canPerformAttack(oldBoard, attackIndex, defendIndex)) return {board:oldBoard, redTeam: oldRedTeam, blueTeam: oldBlueTeam};
   const attacker = oldBoard[attackIndex].piece;
   const defender = oldBoard[defendIndex].piece;
   let redTeam = oldRedTeam;
   let blueTeam = oldBlueTeam;
-  let board = [...oldBoard];
+  let board = oldBoard;
 
-  if (attacker.defeats.indexOf(defender.name) !== -1) {
+  if (attacker.rank < defender.rank) {
+    board = [...oldBoard];
     if (defender.color === PIECE_COLORS.BLUE) {
       blueTeam = [...oldBlueTeam, defender];
     } else {
@@ -271,16 +282,49 @@ export const attackMove = (oldBoard, attackIndex, defendIndex, oldRedTeam, oldBl
     delete board[attackIndex].piece;
     return {board, redTeam, blueTeam};
   }
-
-  if (defender.defeats.indexOf(attacker.name) !== -1) {
-    if (attacker.color === PIECE_COLORS.BLUE) {
-      blueTeam = [...oldBlueTeam, attacker];
-    } else {
+  else if (attacker.rank === defender.rank) {
+    board = [...oldBoard];
+    if (defender.color === PIECE_COLORS.BLUE) {
+      blueTeam = [...oldBlueTeam, defender];
       redTeam = [...oldRedTeam, attacker];
+      delete board[attackIndex].piece;
+      delete board[defendIndex].piece;
+      return {board, redTeam, blueTeam};
+    } else {
+      blueTeam = [...oldBlueTeam, attacker];
+      redTeam = [...oldRedTeam, defender];
+      delete board[attackIndex].piece;
+      delete board[defendIndex].piece;
+      return {board, redTeam, blueTeam};
     }
-    delete board[attackIndex].piece;
-    return {board, redTeam, blueTeam};
+  }
+  else // attacker.rank > defender.rank
+  {
+    if ((attacker.name === PIECE_NAMES.SPY && defender.name === PIECE_NAMES.MARSHAL) || (attacker.name === PIECE_NAMES.MINER && defender.name === PIECE_NAMES.BOMB)) {
+      // Special case spy beats marshal when attacking
+      // Special case when Miner attacks bomb
+      board = [...oldBoard];
+      if (defender.color === PIECE_COLORS.BLUE) {
+        blueTeam = [...oldBlueTeam, defender];
+      } else {
+        redTeam = [...oldRedTeam, defender];
+      }
+      board[defendIndex].piece = attacker;
+      delete board[attackIndex].piece;
+      return {board, redTeam, blueTeam};
+    } else {
+      // regular case defender beats attacker
+      board = [...oldBoard];
+      delete board[attackIndex].piece;
+      if (defender.color === PIECE_COLORS.BLUE) {
+        redTeam = [...oldRedTeam, attacker];
+        return {board, redTeam, blueTeam};
+      } else {
+        blueTeam = [...oldBlueTeam, attacker];
+        return {board, redTeam, blueTeam};
+      }      
+    }
   }
 
-  return {board, redTeam, blueTeam};
+  return {board:oldBoard, redTeam: oldRedTeam, blueTeam: oldBlueTeam};
 };

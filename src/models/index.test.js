@@ -288,3 +288,45 @@ it('can defeat a lower ranked player when attacked by a higher rank horizontally
     delete expectedBoard[attackIndex].piece;
     expect(attackOutcome).toHaveProperty('board', expectedBoard);
 });
+
+it('can defeat a lower ranked attacker when defended by a higher rank horizontally', () => {
+    let board = createBoard();
+    let redTeam = createTeam(PIECE_COLORS.RED);
+    let blueTeam = createTeam(PIECE_COLORS.BLUE);
+    const attackIndex = 0;
+    let update = popPiece(blueTeam, PIECE_NAMES.SCOUT);
+    blueTeam = update.pieces;
+    const attackPiece = update.piece;
+    const defendIndex = 1;
+    update = popPiece(redTeam, PIECE_NAMES.MINER);
+    redTeam = update.pieces;
+    const defendPiece = update.piece;
+    board = addPieceToBoard(board, attackPiece, attackIndex);
+    board = addPieceToBoard(board, defendPiece, defendIndex);
+    const attackOutcome = attackMove(board, attackIndex, defendIndex, redTeam, blueTeam);
+    expect(attackOutcome).toHaveProperty('redTeam', redTeam);
+    expect(attackOutcome).toHaveProperty('blueTeam', [...blueTeam, attackPiece]);
+    let expectedBoard = [...board];
+    delete expectedBoard[defendIndex].piece;
+    expect(attackOutcome.board).toEqual(expectedBoard);
+});
+
+it('cannot attack from the wrong location', () => {
+    let board = createBoard();
+    let redTeam = createTeam(PIECE_COLORS.RED);
+    let blueTeam = createTeam(PIECE_COLORS.BLUE);
+    const attackIndex = 0;
+    let update = popPiece(blueTeam, PIECE_NAMES.SCOUT);
+    const attackPiece = update.piece;
+    blueTeam = update.pieces;
+    const defendIndex = 9;
+    update = popPiece(redTeam, PIECE_NAMES.MINER);
+    const defendPiece = update.piece;
+    redTeam = update.pieces;
+    board = addPieceToBoard(board, attackPiece, attackIndex);
+    board = addPieceToBoard(board, defendPiece, defendIndex);
+    const attackOutcome = attackMove(board, attackIndex, defendIndex, redTeam, blueTeam);
+    expect(attackOutcome.board).toBe(board);
+    expect(attackOutcome.redTeam).toBe(redTeam);
+    expect(attackOutcome.blueTeam).toBe(blueTeam);
+});

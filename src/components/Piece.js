@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GAME_STATES, PIECE_COLORS } from '../models/';
-import './Piece.css';
+import styel from './Piece.css';
 
 export const pieceDragAndDropTag = 'Piece';
 
