@@ -280,22 +280,17 @@ export const attackMove = (oldBoard, attackIndex, defendIndex, oldRedTeam, oldBl
     }
     board[defendIndex].piece = attacker;
     delete board[attackIndex].piece;
-    return {board, redTeam, blueTeam};
   }
   else if (attacker.rank === defender.rank) {
     board = [...oldBoard];
+    delete board[attackIndex].piece;
+    delete board[defendIndex].piece;
     if (defender.color === PIECE_COLORS.BLUE) {
       blueTeam = [...oldBlueTeam, defender];
       redTeam = [...oldRedTeam, attacker];
-      delete board[attackIndex].piece;
-      delete board[defendIndex].piece;
-      return {board, redTeam, blueTeam};
     } else {
       blueTeam = [...oldBlueTeam, attacker];
       redTeam = [...oldRedTeam, defender];
-      delete board[attackIndex].piece;
-      delete board[defendIndex].piece;
-      return {board, redTeam, blueTeam};
     }
   }
   else // attacker.rank > defender.rank
@@ -304,27 +299,24 @@ export const attackMove = (oldBoard, attackIndex, defendIndex, oldRedTeam, oldBl
       // Special case spy beats marshal when attacking
       // Special case when Miner attacks bomb
       board = [...oldBoard];
+      board[defendIndex].piece = attacker;
+      delete board[attackIndex].piece;
       if (defender.color === PIECE_COLORS.BLUE) {
         blueTeam = [...oldBlueTeam, defender];
       } else {
         redTeam = [...oldRedTeam, defender];
       }
-      board[defendIndex].piece = attacker;
-      delete board[attackIndex].piece;
-      return {board, redTeam, blueTeam};
     } else {
       // regular case defender beats attacker
       board = [...oldBoard];
       delete board[attackIndex].piece;
       if (defender.color === PIECE_COLORS.BLUE) {
         redTeam = [...oldRedTeam, attacker];
-        return {board, redTeam, blueTeam};
       } else {
         blueTeam = [...oldBlueTeam, attacker];
-        return {board, redTeam, blueTeam};
       }      
     }
   }
 
-  return {board:oldBoard, redTeam: oldRedTeam, blueTeam: oldBlueTeam};
+  return {board, redTeam, blueTeam};
 };

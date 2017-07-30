@@ -15,7 +15,6 @@ const spotTarget = {
   drop(props, monitor) {
     const pieceBeingDragged = monitor.getItem();
 
-    // invalid piece being dragged
     if(!pieceBeingDragged.piece) return;
     if (props.game === GAME_STATES.SETUP_BLUE || props.game === GAME_STATES.SETUP_RED) {
       if (pieceBeingDragged.index) {
